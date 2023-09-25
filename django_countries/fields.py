@@ -15,13 +15,16 @@ from django_countries import Countries, countries, filters, ioc_data, widgets
 from django_countries.conf import settings
 
 _entry_points: Iterable[Any]
-try:
+if sys.version_info >= (3, 8):
     import importlib.metadata
 
-    _entry_points = importlib.metadata.entry_points().get(
-        "django_countries.Country", []
-    )
-except ImportError:  # Python <3.8
+    if sys.version_info >= (3, 10):
+        _entry_points = importlib.metadata.entry_points(group="django_countries.Country")
+    else:
+        _entry_points = importlib.metadata.entry_points().get(
+            "django_countries.Country", []
+        )
+else:
     import pkg_resources
 
     _entry_points = pkg_resources.iter_entry_points("django_countries.Country")
